@@ -1,0 +1,210 @@
+<!doctype html>
+
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Playlist 5 Tombol — Simple & Bagus</title>
+  <style>
+    :root{
+      --bg:#0f172a; /* dark navy */
+      --card:#0b1220;
+      --accent:#7dd3fc; /* sky */
+      --muted:#94a3b8;
+      --glass: rgba(255,255,255,0.04);
+    }
+    *{box-sizing:border-box}
+    body{font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,var(--bg),#071026);color:#fff}
+    .container{width:100%;max-width:760px;padding:28px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:16px;box-shadow:0 8px 30px rgba(2,6,23,0.7);backdrop-filter: blur(6px);}
+    header{display:flex;gap:12px;align-items:center}
+    .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#60a5fa);display:flex;align-items:center;justify-content:center;font-weight:700;color:#06202b}
+    h1{font-size:18px;margin:0}
+    p.sub{margin:6px 0 18px;color:var(--muted);font-size:13px}.player{display:grid;grid-template-columns:1fr 260px;gap:18px;align-items:center}
+.left{padding:16px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);}
+.track-title{font-weight:600;font-size:16px}
+.controls{margin-top:12px;display:flex;gap:10px;align-items:center}
+.btn-play{padding:10px 14px;border-radius:10px;background:var(--accent);color:#022;cursor:pointer;border:none;font-weight:700}
+.btn-small{padding:8px 10px;border-radius:10px;background:var(--glass);border:1px solid rgba(255,255,255,0.03);cursor:pointer}
+
+.buttons{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.track-btn{flex:1 1 calc(50% - 10px);min-width:120px;padding:16px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);display:flex;align-items:center;gap:12px;cursor:pointer;border:1px solid rgba(255,255,255,0.03);transition:transform .12s ease, box-shadow .12s ease}
+.track-btn:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(2,6,23,0.6)}
+.track-btn.active{outline:2px solid rgba(125,211,252,0.14);box-shadow:0 12px 40px rgba(41,98,255,0.06)}
+.track-icon{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#fff2, #fff1);display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:700}
+
+.right{padding:16px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);}
+.progress{height:8px;background:rgba(255,255,255,0.04);border-radius:8px;overflow:hidden;margin-top:12px}
+.progress > i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--accent),#60a5fa)}
+.meta{display:flex;justify-content:space-between;margin-top:8px;color:var(--muted);font-size:13px}
+.volume{margin-top:12px;display:flex;gap:8px;align-items:center}
+input[type=range]{-webkit-appearance:none;width:100%}
+input[type=range]::-webkit-slider-runnable-track{height:8px;background:rgba(255,255,255,0.06);border-radius:8px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);margin-top:-4px}
+
+footer{margin-top:16px;color:var(--muted);font-size:13px;text-align:center}
+
+@media (max-width:720px){.player{grid-template-columns:1fr;}.track-btn{flex:1 1 100%}}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">▶︎</div>
+      <div>
+        <h1>Playlist 5 Tombol</h1>
+        <p class="sub">Klik salah satu tombol untuk memainkan musik. Ganti file audio di folder /audio atau gunakan URL langsung.</p>
+      </div>
+    </header><section class="player">
+  <div class="left">
+    <div class="track-title" id="trackTitle">Belum ada lagu dipilih</div>
+    <div class="controls">
+      <button id="playPause" class="btn-play" disabled>Play</button>
+      <button id="prev" class="btn-small" title="Sebelumnya">⏮️</button>
+      <button id="next" class="btn-small" title="Berikutnya">⏭️</button>
+      <div style="flex:1"></div>
+      <div id="status" style="color:var(--muted);font-size:13px">Stopped</div>
+    </div>
+
+    <div class="buttons" id="buttonsContainer">
+      <!-- 5 tombol akan di-render oleh JS -->
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="progress" title="Progress"><i id="progressBar"></i></div>
+    <div class="meta"><span id="currentTime">0:00</span><span id="duration">0:00</span></div>
+
+    <div class="volume">
+      <div style="width:32px;text-align:center">🔊</div>
+      <input id="volume" type="range" min="0" max="1" step="0.01" value="0.8">
+    </div>
+
+    <div style="margin-top:12px;color:var(--muted);font-size:13px">Autoplay next: <label><input type="checkbox" id="autoplay" checked> </label></div>
+  </div>
+</section>
+
+<footer>Ganti nama file audio dengan track1.mp3 - track5.mp3 di folder /audio atau edit array `playlist` pada script.</footer>
+
+  </div>  <script>
+    // Playlist — ubah src ke path/URL yang kamu punya
+    const playlist = [
+      {title:'Track 1 — Chill', src:'sound.mp3'},
+      {title:'Track 2 — Groove', src:'sound2.mp3'},
+      {title:'Track 3 — Calm', src:'sound3.mp3'},
+      {title:'Track 4 — Upbeat', src:'sound4.mp3'},
+      {title:'Track 5 — Piano', src:'sound5.mp3'}
+    ];
+
+    const container = document.getElementById('buttonsContainer');
+    const trackTitle = document.getElementById('trackTitle');
+    const playPauseBtn = document.getElementById('playPause');
+    const prevBtn = document.getElementById('prev');
+    const nextBtn = document.getElementById('next');
+    const status = document.getElementById('status');
+    const progressBar = document.getElementById('progressBar');
+    const currentTimeEl = document.getElementById('currentTime');
+    const durationEl = document.getElementById('duration');
+    const volumeEl = document.getElementById('volume');
+    const autoplayEl = document.getElementById('autoplay');
+
+    let audio = new Audio();
+    audio.preload = 'metadata';
+    audio.volume = parseFloat(volumeEl.value);
+
+    let currentIndex = -1;
+
+    function formatTime(t){
+      if (isNaN(t)) return '0:00';
+      const m = Math.floor(t/60);
+      const s = Math.floor(t%60).toString().padStart(2,'0');
+      return `${m}:${s}`;
+    }
+
+    function renderButtons(){
+      playlist.forEach((item, i)=>{
+        const btn = document.createElement('button');
+        btn.className = 'track-btn';
+        btn.innerHTML = `<div class=\"track-icon\">${i+1}</div><div style=\"flex:1;text-align:left\"><div style=\"font-weight:600\">${item.title}</div><div style=\"font-size:12px;color:var(--muted)\">Klik untuk mainkan</div></div>`;
+        btn.addEventListener('click', ()=> playIndex(i));
+        container.appendChild(btn);
+      });
+    }
+
+    function setActiveButton(){
+      const buttons = container.querySelectorAll('.track-btn');
+      buttons.forEach((b, idx)=>{
+        b.classList.toggle('active', idx === currentIndex);
+      });
+    }
+
+    function playIndex(i){
+      if (i < 0 || i >= playlist.length) return;
+      currentIndex = i;
+      audio.src = playlist[i].src;
+      audio.play().catch(err=>{
+        console.warn('Play error:', err);
+      });
+      playPauseBtn.disabled = false;
+      playPauseBtn.textContent = 'Pause';
+      trackTitle.textContent = playlist[i].title;
+      status.textContent = 'Playing';
+      setActiveButton();
+    }
+
+    playPauseBtn.addEventListener('click', ()=>{
+      if (!audio.src) return;
+      if (audio.paused){ audio.play(); playPauseBtn.textContent='Pause'; status.textContent='Playing'; }
+      else { audio.pause(); playPauseBtn.textContent='Play'; status.textContent='Paused'; }
+    });
+
+    prevBtn.addEventListener('click', ()=>{
+      if (currentIndex <= 0) return;
+      playIndex(currentIndex-1);
+    });
+    nextBtn.addEventListener('click', ()=>{
+      if (currentIndex < playlist.length-1) playIndex(currentIndex+1);
+    });
+
+    audio.addEventListener('timeupdate', ()=>{
+      const pct = (audio.currentTime / (audio.duration || 1)) * 100;
+      progressBar.style.width = pct + '%';
+      currentTimeEl.textContent = formatTime(audio.currentTime);
+      durationEl.textContent = formatTime(audio.duration);
+    });
+
+    audio.addEventListener('ended', ()=>{
+      status.textContent = 'Ended';
+      playPauseBtn.textContent = 'Play';
+      if (autoplayEl.checked){
+        if (currentIndex < playlist.length-1) playIndex(currentIndex+1);
+        else { currentIndex = -1; setActiveButton(); }
+      }
+    });
+
+    volumeEl.addEventListener('input', ()=>{ audio.volume = parseFloat(volumeEl.value); });
+
+    // allow clicking progress to seek
+    document.querySelector('.progress').addEventListener('click', (e)=>{
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const pct = x / rect.width;
+      if (audio.duration) audio.currentTime = pct * audio.duration;
+    });
+
+    // render buttons on load
+    renderButtons();
+
+    // small UX: keyboard space toggles play/pause
+    window.addEventListener('keydown', (e)=>{
+      if (e.code === 'Space'){
+        e.preventDefault();
+        if (!audio.src) return;
+        if (audio.paused) audio.play(); else audio.pause();
+      }
+    });
+
+    // Tips for user in console
+    console.log('Playlist ready. Update the `playlist` array in the script to point to your audio files (local or URL).');
+  </script></body>
+</html>
